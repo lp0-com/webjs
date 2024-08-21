@@ -121,7 +121,8 @@ export async function handleLp0Subscription(
   botAlignClasses,
   botMessageClasses,
   hideStart, // existing parameter
-  showHistory // new parameter
+  showHistory, // new parameter
+  handleBotResponse // callback function
 ) {
   try {
     console.log("Handling LP0 subscription for botId:", botId, "customerId:", customerId);
@@ -141,7 +142,7 @@ export async function handleLp0Subscription(
         console.log("Received user message:", message);
         if (message === "/start" && hideStart) {
           continue;
-        };
+        }
         // Only display user messages if showHistory is true
         if (showHistory) {
           chatElement.innerHTML += `<div class="${userAlignClasses}"><div class="${userMessageClasses}">${message}</div></div>`;
@@ -163,6 +164,8 @@ export async function handleLp0Subscription(
           // Add new bot message to the chat
           chatElement.innerHTML += `<div class="${botAlignClasses}"><div class="${botMessageClasses}">${message}</div></div>`;
         }
+
+        handleBotResponse(); // Stop "Thinking" animation and reset input
       }
     })().catch(console.error);
 
