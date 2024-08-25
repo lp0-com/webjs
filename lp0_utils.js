@@ -1,3 +1,5 @@
+const JWT_URL = "https://jwt.lp0.com/jwt/user";
+const NATS_URL = "wss://nats.lp0.com";
 export async function loadScript(src, shadowRoot) {
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
@@ -51,7 +53,7 @@ export async function loadScript(src, shadowRoot) {
     try {
       console.log("Fetching JWT for public key:", publicKey);
       const response = await fetch(
-        `https://jwt.lp0.com/jwt/user?public_key=${encodeURIComponent(publicKey)}`,
+        `${JWT_URL}?public_key=${encodeURIComponent(publicKey)}`,
       );
       if (!response.ok) {
         throw new Error(`Failed to get JWT: ${response.statusText}`);
@@ -89,7 +91,7 @@ export async function loadScript(src, shadowRoot) {
       if (!fetchedJwt) throw new Error("Failed to fetch JWT.");
   
       const options = {
-        servers: "wss://nats.lp0.com",
+        servers: NATS_URL,
         authenticator: window.nats.jwtAuthenticator(
           fetchedJwt,
           new Uint8Array(keypair.getSeed()),
@@ -140,7 +142,7 @@ export async function loadScript(src, shadowRoot) {
           const message = window.sc.decode(m.data);
           if (!message) throw new Error("Failed to decode user message.");
           console.log("Received user message:", message);
-          if (message === "/start" && hideStart) {
+          if (message.startsWith("/start") && hideStart) {
             continue;
           }
           // Only display user messages if showHistory is true
@@ -168,8 +170,9 @@ export async function loadScript(src, shadowRoot) {
           handleBotResponse(); // Stop "Thinking" animation and reset input
         }
       })().catch(console.error);
-  
-      await publishMessageToLp0(botId, customerId, "/start");
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      await publishMessageToLp0(botId, customerId, "/start {" + `"USER_TIMEZONE": "${userTimezone}"` + "}");
       console.log('"/start" message sent.');
     } catch (error) {
       console.error("Error handling LP0 subscription:", error);
