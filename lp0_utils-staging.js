@@ -113,7 +113,6 @@ export async function loadScript(src, shadowRoot) {
       throw error;
     }
   }
-  
   export async function handleLp0Subscription(
     botId,
     customerId,
@@ -122,9 +121,12 @@ export async function loadScript(src, shadowRoot) {
     userMessageClasses,
     botAlignClasses,
     botMessageClasses,
-    hideStart, // existing parameter
-    showHistory, // new parameter
-    handleBotResponse // callback function
+    hangupUrl,
+    hangupWait,
+    hideStart, 
+    showHistory, 
+    handleBotResponse,
+
   ) {
     try {
       console.log("Handling LP0 subscription for botId:", botId, "customerId:", customerId);
@@ -159,9 +161,29 @@ export async function loadScript(src, shadowRoot) {
       const botSub = window.nc.subscribe(`user.${userPublicKey}.${sessionId}.bot.${botId}`);
       (async () => {
         for await (const m of botSub) {
-          const message = window.sc.decode(m.data);
+          let message = window.sc.decode(m.data);
           if (!message) throw new Error("Failed to decode bot message.");
           console.log("Received bot message:", message);
+          if (message.endsWith("[HANGUP]")) {
+            // Remove the [HANGUP] tag
+            message = message.replace("[HANGUP]", "").trim();
+            console.log("gona disable input");
+            if (chatElement.closest("lp0-webchat")) {
+              console.log("Found lp0-webchat element, disabling input");
+              chatElement.closest("lp0-webchat").disableInput();
+            } else {
+              console.log("lp0-webchat element not found");
+              throw new Error("lp0-webchat element not found");
+            }
+            
+
+            console.log("Hangup URL:", hangupUrl, "Hangup Wait:", hangupWait);
+            if (hangupUrl && hangupWait) {
+              setTimeout(() => {
+                window.location.href = hangupUrl;
+              }, parseInt(hangupWait, 10));
+            }
+          }
   
           const formattedMessage = formatMessage(message);
   

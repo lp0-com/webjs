@@ -28,9 +28,11 @@ class LP0WebChat extends HTMLElement {
       "send-button-classes",
       "input-wrapper-classes",
       "theme-config",
-      "waiting-text", // Updated attribute for waiting text
+      "placeholder-text",
+      "waiting-text",
       "show-history",
-      "hide-start"
+      "hide-start",
+
     ];
 
     return requiredAttributes.every(attr => {
@@ -69,7 +71,7 @@ class LP0WebChat extends HTMLElement {
           <div hx-lp0-subscribe class="chat-messages" aria-live="polite"></div>
         </div>
         <div id="input-wrapper" class="${this.getAttribute("input-wrapper-classes")}">
-          <input type="text" id="userInput" placeholder="Type a message..." class="${this.getAttribute("input-classes")} border-none rounded-none focus:outline-none focus:ring-0" />
+          <input type="text" id="userInput" placeholder="${this.getAttribute("placeholder-text")}" class="${this.getAttribute("input-classes")} border-none rounded-none focus:outline-none focus:ring-0" />
           <button class="${this.getAttribute("send-button-classes")} border-none rounded-none" id="sendMessageButton">Send</button>
         </div>
       </div>
@@ -107,6 +109,8 @@ class LP0WebChat extends HTMLElement {
           this.getAttribute("user-message-classes"),
           this.getAttribute("bot-align-classes"),
           this.getAttribute("bot-message-classes"),
+          this.getAttribute("hangup-url"),
+          this.getAttribute("hangup-wait"),
           hideStart,
           showHistory,
           this.handleBotResponse.bind(this) // Bind the bot response handler
@@ -152,7 +156,19 @@ class LP0WebChat extends HTMLElement {
       inputWrapper.innerHTML = `<span class="${this.getAttribute("input-classes")}">${waitingText}${dots}</span>`;
     }, 500);
   }
-
+  disableInput() {
+    const inputWrapper = this.querySelector("#input-wrapper");
+  
+    if (inputWrapper) {
+      // Apply Tailwind classes to the input-wrapper to make all child elements look disabled
+      inputWrapper.classList.add("opacity-0", "pointer-events-none", "cursor-not-allowed");
+      console.log("Input wrapper and all children disabled");
+    } else {
+      console.log("Input wrapper not found");
+    }
+  }
+  
+  
   handleBotResponse() {
     this.isWaitingForBot = false;
     clearInterval(this.intervalId); // Stop the animation
@@ -162,7 +178,7 @@ class LP0WebChat extends HTMLElement {
   resetInputBox() {
     const inputWrapper = this.querySelector("#input-wrapper");
     inputWrapper.innerHTML = `
-      <input type="text" id="userInput" placeholder="Type a message..." class="${this.getAttribute("input-classes")} border-none rounded-none focus:outline-none focus:ring-0" />
+      <input type="text" id="userInput" placeholder="${this.getAttribute("placeholder-text")}" class="${this.getAttribute("input-classes")} border-none rounded-none focus:outline-none focus:ring-0" />
       <button class="${this.getAttribute("send-button-classes")} border-none rounded-none" id="sendMessageButton">Send</button>
     `;
     const sendMessageButton = this.querySelector("#sendMessageButton");
