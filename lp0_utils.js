@@ -136,6 +136,10 @@ export async function loadScript(src, shadowRoot) {
       const sessionId = window.lp0_session_id;
       const userPublicKey = window.publicKey;
   
+      const formatMessage = (message) => {
+        return message.split('\n').join('<br />');
+      };
+  
       const userSub = window.nc.subscribe(`user.${userPublicKey}.${sessionId}.user`);
       (async () => {
         for await (const m of userSub) {
@@ -147,7 +151,7 @@ export async function loadScript(src, shadowRoot) {
           }
           // Only display user messages if showHistory is true
           if (showHistory) {
-            chatElement.innerHTML += `<div class="${userAlignClasses}"><div class="${userMessageClasses}">${message}</div></div>`;
+            chatElement.innerHTML += `<div class="${userAlignClasses}"><div class="${userMessageClasses}">${formatMessage(message)}</div></div>`;
           }
         }
       })().catch(console.error);
@@ -159,22 +163,25 @@ export async function loadScript(src, shadowRoot) {
           if (!message) throw new Error("Failed to decode bot message.");
           console.log("Received bot message:", message);
   
+          const formattedMessage = formatMessage(message);
+  
           if (!showHistory) {
             // Clear existing messages and only show the latest bot message if showHistory is false
-            chatElement.innerHTML = `<div class="${botAlignClasses}"><div class="${botMessageClasses}">${message}</div></div>`;
+            chatElement.innerHTML = `<div class="${botAlignClasses}"><div class="${botMessageClasses}">${formattedMessage}</div></div>`;
           } else {
             // Add new bot message to the chat
-            chatElement.innerHTML += `<div class="${botAlignClasses}"><div class="${botMessageClasses}">${message}</div></div>`;
+            chatElement.innerHTML += `<div class="${botAlignClasses}"><div class="${botMessageClasses}">${formattedMessage}</div></div>`;
           }
   
           handleBotResponse(); // Stop "Thinking" animation and reset input
         }
       })().catch(console.error);
+  
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+  
       await publishMessageToLp0(botId, customerId, "/start " + JSON.stringify({ 
         USER_TIMEZONE: userTimezone
-       }));
+      }));
       console.log('"/start" message sent.');
     } catch (error) {
       console.error("Error handling LP0 subscription:", error);
