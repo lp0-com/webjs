@@ -17,6 +17,7 @@ class LP0WebChat extends HTMLElement {
   }
   handleMessage(event) {
     // Only handle messages from the allowed origin
+    console.log("got event", event)
     if (event.origin.endsWith("lp0.com")) {
       if (event.data.email) {
         console.log("Received email from parent:", event.data.email);
