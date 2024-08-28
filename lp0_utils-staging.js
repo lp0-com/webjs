@@ -210,10 +210,10 @@ export async function handleLp0Subscription(
       msgObj.USER_EMAIL = userEmail;
     }
     if (firstName) {
-      msgObj.FIRST_NAME = firstName;
+      msgObj.USER_FIRST_NAME = firstName;
     }
     if (lastName) {
-      msgObj.LAST_NAME = lastName;
+      msgObj.USER_LAST_NAME = lastName;
     }
     await publishMessageToLp0(botId, customerId, "/start " + JSON.stringify(msgObj));
     console.log('"/start" message sent.');
