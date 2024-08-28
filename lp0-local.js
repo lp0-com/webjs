@@ -11,9 +11,23 @@ class LP0WebChat extends HTMLElement {
     super();
     this.initialized = false;
     this.isWaitingForBot = false; // Track if waiting for the bot response
+    window.addEventListener("message", this.handleMessage.bind(this), false);
     console.log("LP0 WebChat: Constructor initialized.");
+    
   }
-
+  handleMessage(event) {
+    // Only handle messages from the allowed origin
+    console.log("got event", event)
+    if (event.origin.endsWith("lp0.com")) {
+      if (event.data.email) {
+        console.log("Received email from parent:", event.data.email);
+        // You can now use this email in your component, for example, set it as an attribute
+        this.email = event.data.email;
+      }
+    } else {
+      console.warn("Received message from unauthorized origin:", event.origin);
+    }
+  }
   // Validates required attributes and logs errors if any are missing
   validateAttributes() {
     const requiredAttributes = [

@@ -200,10 +200,13 @@ export async function loadScript(src, shadowRoot) {
       })().catch(console.error);
   
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
-      await publishMessageToLp0(botId, customerId, "/start " + JSON.stringify({ 
+      let msgObj = {
         USER_TIMEZONE: userTimezone
-      }));
+      };
+      if (this.email) {
+        msgObj.USER_EMAIL = this.email;
+      }
+      await publishMessageToLp0(botId, customerId, "/start " + JSON.stringify(msgObj));
       console.log('"/start" message sent.');
     } catch (error) {
       console.error("Error handling LP0 subscription:", error);
