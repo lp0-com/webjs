@@ -126,6 +126,7 @@ export async function loadScript(src, shadowRoot) {
     hideStart, 
     showHistory, 
     handleBotResponse,
+    userEmail
 
   ) {
     try {
@@ -203,8 +204,8 @@ export async function loadScript(src, shadowRoot) {
       let msgObj = {
         USER_TIMEZONE: userTimezone
       };
-      if (this.email) {
-        msgObj.USER_EMAIL = this.email;
+      if (userEmail) {
+        msgObj.USER_EMAIL = userEmail;
       }
       await publishMessageToLp0(botId, customerId, "/start " + JSON.stringify(msgObj));
       console.log('"/start" message sent.');
