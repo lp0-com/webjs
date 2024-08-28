@@ -207,6 +207,8 @@ class LP0WebChat extends HTMLElement {
         userInput.value = ""; // Clear the input field after sending the message
       },
     );
+
+    userInput.focus(); // Focus on the input box after resetting
   }
 }
 
