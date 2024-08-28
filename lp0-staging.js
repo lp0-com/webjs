@@ -114,7 +114,9 @@ class LP0WebChat extends HTMLElement {
           hideStart,
           showHistory,
           this.handleBotResponse.bind(this),
-          this.getAttribute("user-email")
+          this.getAttribute("user-email"),
+          this.getAttribute("first-name"),
+          this.getAttribute("last-name"),
         );
       }
 

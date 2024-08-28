@@ -126,7 +126,9 @@ export async function handleLp0Subscription(
   hideStart, 
   showHistory, 
   handleBotResponse,
-  userEmail
+  userEmail,
+  firstName,
+  lastName
 
 ) {
   try {
@@ -207,6 +209,12 @@ export async function handleLp0Subscription(
     if (userEmail) {
       msgObj.USER_EMAIL = userEmail;
     }
+    if (firstName) {
+      msgObj.FIRST_NAME = firstName;
+    }
+    if (lastName) {
+      msgObj.LAST_NAME = lastName;
+    }
     await publishMessageToLp0(botId, customerId, "/start " + JSON.stringify(msgObj));
     console.log('"/start" message sent.');
   } catch (error) {
@@ -229,3 +237,4 @@ export async function publishMessageToLp0(botId, customerId, message) {
     throw error;
   }
 }
+
