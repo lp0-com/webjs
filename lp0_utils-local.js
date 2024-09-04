@@ -142,7 +142,7 @@ export async function handleLp0Subscription(
     const userPublicKey = window.publicKey;
 
     const formatMessage = (message) => {
-      return message.split('\n').join('<br />');
+      return message.replace(/\\\\n/g,'\n').split('\n').join('<br />');
     };
 
     const userSub = window.nc.subscribe(`user.${userPublicKey}.${sessionId}.user`);
