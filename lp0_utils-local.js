@@ -72,7 +72,7 @@ export async function initializeLp0() {
   try {
     console.log("Initializing LP0...");
 
-    window.lp0_session_id = window.uuidv4();
+    window.lp0_session_id = Math.floor(Date.now() / 1000) + "_" + window.uuidv4();
     if (!window.lp0_session_id)
       throw new Error("Failed to generate session ID.");
     console.log("Session ID generated:", window.lp0_session_id);
